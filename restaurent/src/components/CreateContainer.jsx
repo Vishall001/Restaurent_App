@@ -6,9 +6,12 @@ import {
   MdCloudUpload,
   MdDelete,
   MdFoodBank,
+  MdAttachMoney,
 } from "react-icons/md";
 import { categories } from "../utils/Data";
 import Loader from "./Loader";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "../firebase.config";
 const CreateContainer = () => {
   const [title, setTitle] = useState("");
   const [calories, setCalories] = useState("");
@@ -20,8 +23,46 @@ const CreateContainer = () => {
   const [msg, setMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   // const [{ foodItems }, dispatch] = useStateValue();
-  const uploadImage = () => {};
-  const deleteImage = () => {};
+  const uploadImage = (e) => {
+    setIsLoading(true);
+    const imageFile = e.target.files[0];
+    const storageRef = ref(storage, `Images/${Date.now()}-${imageFile.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const uploadProgress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      },
+      (err) => {
+        console.log(err);
+        setFields(true);
+        setMsg("Error while uploading : Try Again 🙇");
+        setAlertStatus("danger");
+        setTimeout(() => {
+          setFields(false);
+          setIsLoading(false);
+        }, 4000);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImageAsset(downloadURL);
+          setIsLoading(false);
+          setFields(true);
+          setMsg("Image uploaded successfully 😊");
+          setAlertStatus("success");
+          setTimeout(() => {
+            setFields(false);
+          }, 4000);
+        });
+      }
+    );
+  };
+  const deleteImage = () => {
+    
+  };
+  const saveDetails = () => {};
   return (
     <div className="w-full min-h-screen flex justify-center items-center ">
       <div className="w-[90%] md:w-[75%] border border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center gap-4">
@@ -127,7 +168,7 @@ const CreateContainer = () => {
             />
           </div>
           <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
-            <MdFoodBank className="text-gray-700 text-2xl" />
+            <MdAttachMoney className="text-gray-700 text-2xl" />
             <input
               type="text"
               required
@@ -136,7 +177,16 @@ const CreateContainer = () => {
               placeholder="Price"
               className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
             />
-          </div>{" "}
+          </div>
+        </div>
+        <div className="flex items-center w-full ">
+          <button
+            type="button"
+            className="ml-0 md:ml-auto w-full md:w-auto border-none outline-none bg-emerald-500 px-12 py-2 rounded-lg text-lg text-white font-semibold"
+            onClick={saveDetails}
+          >
+            Save
+          </button>
         </div>
       </div>
     </div>
