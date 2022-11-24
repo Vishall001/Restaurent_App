@@ -1,7 +1,5 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { useStateValue } from "../context/StateProvider";
 
 import {
   MdFastfood,
@@ -10,7 +8,6 @@ import {
   MdFoodBank,
   MdAttachMoney,
 } from "react-icons/md";
-import { categories } from "../utils/Data";
 import Loader from "./Loader";
 import {
   deleteObject,
@@ -21,6 +18,9 @@ import {
 import { storage } from "../firebase.config";
 import { getAllFoodItems, saveItem } from "../utils/firebaseFunctions";
 import { actionType } from "../context/reducer";
+import { useStateValue } from "../context/StateProvider";
+import { categories } from "../utils/Data";
+
 const CreateContainer = () => {
   const [title, setTitle] = useState("");
   const [calories, setCalories] = useState("");
@@ -32,6 +32,7 @@ const CreateContainer = () => {
   const [msg, setMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [{ foodItems }, dispatch] = useStateValue();
+
   const uploadImage = (e) => {
     setIsLoading(true);
     const imageFile = e.target.files[0];
@@ -44,10 +45,10 @@ const CreateContainer = () => {
         const uploadProgress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
       },
-      (err) => {
-        console.log(err);
+      (error) => {
+        console.log(error);
         setFields(true);
-        setMsg("Error while uploading : Try Again 🙇");
+        setMsg("Error while uploading : Try AGain 🙇");
         setAlertStatus("danger");
         setTimeout(() => {
           setFields(false);
@@ -68,6 +69,7 @@ const CreateContainer = () => {
       }
     );
   };
+
   const deleteImage = () => {
     setIsLoading(true);
     const deleteRef = ref(storage, imageAsset);
@@ -75,7 +77,6 @@ const CreateContainer = () => {
       setImageAsset(null);
       setIsLoading(false);
       setFields(true);
-
       setMsg("Image deleted successfully 😊");
       setAlertStatus("success");
       setTimeout(() => {
@@ -83,6 +84,7 @@ const CreateContainer = () => {
       }, 4000);
     });
   };
+
   const saveDetails = () => {
     setIsLoading(true);
     try {
@@ -114,17 +116,18 @@ const CreateContainer = () => {
         }, 4000);
         clearData();
       }
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
       setFields(true);
-      setMsg("Error while uploading : Try Again 🙇");
+      setMsg("Error while uploading : Try AGain 🙇");
       setAlertStatus("danger");
       setTimeout(() => {
         setFields(false);
         setIsLoading(false);
       }, 4000);
     }
-    fetchData()
+
+    fetchData();
   };
 
   const clearData = () => {
@@ -143,9 +146,10 @@ const CreateContainer = () => {
       });
     });
   };
+
   return (
-    <div className="w-full min-h-screen flex justify-center items-center ">
-      <div className="w-[90%] md:w-[75%] border border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center gap-4">
+    <div className="w-full min-h-screen flex items-center justify-center">
+      <div className="w-[90%] md:w-[50%] border border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center gap-4">
         {fields && (
           <motion.p
             initial={{ opacity: 0 }}
@@ -160,17 +164,19 @@ const CreateContainer = () => {
             {msg}
           </motion.p>
         )}
-        <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2 ">
+
+        <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
           <MdFastfood className="text-xl text-gray-700" />
           <input
             type="text"
             required
             value={title}
-            placeholder="Give me a title.."
             onChange={(e) => setTitle(e.target.value)}
+            placeholder="Give me a title..."
             className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
           />
         </div>
+
         <div className="w-full">
           <select
             onChange={(e) => setCategory(e.target.value)}
@@ -179,7 +185,7 @@ const CreateContainer = () => {
             <option value="other" className="bg-white">
               Select Category
             </option>
-            {categories &&
+            {categories&&
               categories.map((item) => (
                 <option
                   key={item.id}
@@ -191,7 +197,8 @@ const CreateContainer = () => {
               ))}
           </select>
         </div>
-        <div className="group flex justify-center items-center flex-col border-2 border-dotted border-gray-300 w-full h-225 md:h-420 cursor-pointer rounded-md">
+
+        <div className="group flex justify-center items-center flex-col border-2 border-dotted border-gray-300 w-full h-225 md:h-340 cursor-pointer rounded-lg">
           {isLoading ? (
             <Loader />
           ) : (
@@ -200,14 +207,14 @@ const CreateContainer = () => {
                 <>
                   <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
                     <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                      <MdCloudUpload className="text-gray-500 text-3xl hover:text-gray-700 " />
-                      <p className="text-gray-500 hover:text-gray-700 ">
+                      <MdCloudUpload className="text-gray-500 text-3xl hover:text-gray-700" />
+                      <p className="text-gray-500 hover:text-gray-700">
                         Click here to upload
                       </p>
                     </div>
                     <input
                       type="file"
-                      name="uploadImage"
+                      name="uploadimage"
                       accept="image/*"
                       onChange={uploadImage}
                       className="w-0 h-0"
@@ -216,15 +223,15 @@ const CreateContainer = () => {
                 </>
               ) : (
                 <>
-                  <div className="relative h-full ">
+                  <div className="relative h-full">
                     <img
                       src={imageAsset}
-                      alt="uploaded Image"
+                      alt="uploaded image"
                       className="w-full h-full object-cover"
                     />
                     <button
                       type="button"
-                      className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none hover:shadow-md duration-500 transition-all ease-in-out"
+                      className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none hover:shadow-md  duration-500 transition-all ease-in-out"
                       onClick={deleteImage}
                     >
                       <MdDelete className="text-white" />
@@ -235,6 +242,7 @@ const CreateContainer = () => {
             </>
           )}
         </div>
+
         <div className="w-full flex flex-col md:flex-row items-center gap-3">
           <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
             <MdFoodBank className="text-gray-700 text-2xl" />
@@ -247,6 +255,7 @@ const CreateContainer = () => {
               className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
             />
           </div>
+
           <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
             <MdAttachMoney className="text-gray-700 text-2xl" />
             <input
@@ -259,7 +268,8 @@ const CreateContainer = () => {
             />
           </div>
         </div>
-        <div className="flex items-center w-full ">
+
+        <div className="flex items-center w-full">
           <button
             type="button"
             className="ml-0 md:ml-auto w-full md:w-auto border-none outline-none bg-emerald-500 px-12 py-2 rounded-lg text-lg text-white font-semibold"

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import NotFound from "../img/NotFound.svg";
 import { useStateValue } from "../context/StateProvider";
 import { actionType } from "../context/reducer";
+
 const RowContainer = ({ flag, data, scrollValue }) => {
   const rowContainer = useRef();
 
@@ -26,6 +27,7 @@ const RowContainer = ({ flag, data, scrollValue }) => {
   useEffect(() => {
     addtocart();
   }, [items]);
+
   return (
     <div
       ref={rowContainer}
