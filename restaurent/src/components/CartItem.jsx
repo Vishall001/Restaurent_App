@@ -22,8 +22,8 @@ const CartItem = ({ item, setFlag, flag }) => {
     if (action == "add") {
       setQty(qty + 1);
       cartItems.map((item) => {
-        if (item.id === id) {
-          item.qty += 1;
+        if (item.id == id) {
+          item.qty =item.qty+ 1;
           setFlag(flag + 1);
         }
       });
